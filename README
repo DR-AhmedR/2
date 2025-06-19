@@ -1,4 +1,8 @@
 DISCLAIMER: Use this software at your own risk.
 
+We are not affiliated with good game studios
+
 To use you must first locate the item_{VER}.json holding all the game info from the client
 Also make sure to configure ggeConfig or else you wont be able to do much with it
+
+For none debug use please redirect the site to localhost
