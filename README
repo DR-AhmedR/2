@@ -1,4 +1,4 @@
 DISCLAIMER: Use this software at your own risk.
 
 To use you must first locate the item_{VER}.json holding all the game info from the client
-
+Also make sure to configure ggeConfig or else you wont be able to do much with it
