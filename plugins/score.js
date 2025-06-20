@@ -5,6 +5,7 @@ const { xtHandler, sendXT, waitForResult } = require("../ggebot")
 const { client } = require('./discord')
 const { SlashCommandBuilder, Interaction } = require('discord.js');
 const { refreshCommands, commands } = require("./discord.js")
+const ggeConfig = require("../ggeConfig.json")
 
 let playerids = []
 async function getStormRanks(i) {
@@ -154,10 +155,10 @@ async function getAllianceEventRank(interaction, LT) {
         xtHandler.addListener("ain", listener)
     })
     await interaction.deferReply()
-    let allianceName = interaction.options.getString('name') ?? "The Sith Order"
+    let allianceName = interaction.options.getString('name') ?? ggeConfig.defaultAllianceName
     let AID = undefined
     try {
-        AID = await getAllianceByName(allianceName)//allianceID//await getAllianceByName("GOLDEN KNIGHTS")
+        AID = await getAllianceByName(allianceName)
     }
     catch {
         await interaction.editReply("Could not find the alliance specified");
