@@ -2,6 +2,5 @@ node_modules
 .vscode
 ggeConfig.json
 user.db
-package.json
 package-lock.json
 assets/itemassets
