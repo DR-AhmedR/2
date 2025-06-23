@@ -2,6 +2,37 @@ DISCLAIMER: Use this at your own risk.
 
 We are not affiliated with GoodGameStudios
 
+What this package comes with:
+A site where you can run multiple bots with select plugins.
+
+1. A discord bot:
+  Format of / commands : /loot alliance_name ; Gives the alliance loot rankings
+  Gives you these slash commands:
+    /loot
+    /battle-for-berimond
+    /nomads
+    /warofrealms
+    /samurai
+    /bloodcrows
+    /storm
+    /storm-top-players
+2. Plugins:
+  Alerts
+  Outgoings
+  Chat
+  Aqua Island listings / Alerts
+  Aqua Tower listings / Alerts
+  Fortress listings / Alerts
+
+  Shutdown Timer
+  Attack Fortresses (Kingdom)
+  Attack Barrons (Fire)
+  Attack Aqua Forts
+  Attack Khan
+  Attack Nomads
+  Attack Samurai
+  Replace Mead Storm
+
 What you need to do to use:
 1. get items_${VER}.json from the game client and place it within GGE-BOT folder as items.json
 2. npx playwright install
