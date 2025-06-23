@@ -67,6 +67,7 @@ Some info on the plugins:
   Beri cooldown is bypassed.
   The incoming messages will come with a preview of the attack.
   Replace Mead Storm will only replace mead if it sees there is 2.1 hours left and wont skip bewarned.
+  Khan does NOT replace your defence at the current becareful when running for too long.
 
 What you need to do to use:
 1. get items_${VER}.json from the game client and place it within GGE-BOT folder as items.json
