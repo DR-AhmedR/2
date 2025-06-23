@@ -13,7 +13,7 @@ async function signup(event) {
     
     var json;
     try {
-    json = await (await fetch(`https://${window.location.hostname}:${location.port}/api`, {
+    json = await (await fetch(`${location.protocol === 'https:' ? "https" : "http"}://${window.location.hostname}:${location.port}/api`, {
         method: "POST",
         body: JSON.stringify({ id: 1, username: username, password: password, token : token }),
         headers: {

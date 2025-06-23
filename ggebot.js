@@ -5,6 +5,7 @@ const WebSocket = require('ws')
 const ActionType = require("./actions.json")
 const error = require("./err.json")
 const sqlite3 = require("sqlite3")
+const ggeConfig = require("./ggeConfig.json")
 if (isMainThread)
     throw Error("This should be running off of the main thread!")
 
@@ -145,8 +146,6 @@ webSocket.onclose = () => process.exit(0)
 const status = require("./plugins/status.js");
 parentPort.on("message", obj => {
     switch (obj[0]) {
-        case ActionType.GetThreadID:
-            workerData.threadId = obj[1]
         case ActionType.GetLogs:
             parentPort.postMessage([ActionType.GetLogs, [messageBuffer, messageBufferCount]])
         case ActionType.StatusUser:

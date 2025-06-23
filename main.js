@@ -1,23 +1,76 @@
-const https = require('node:https');
-const http = require('node:http');
-const fs = require('node:fs');
-const express = require("express");
+const https = require('node:https')
+const http = require('node:http')
+const fs = require('node:fs')
+const express = require("express")
 const bodyParser = require('body-parser');
-const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser")
 const sqlite3 = require("sqlite3")
 const { WebSocketServer } = require("ws")
 const crypto = require('crypto');
 const process = require("process")
-const { Worker } = require('node:worker_threads');
+const { Worker } = require('node:worker_threads')
 const ActionType = require("./actions.json")
 const ErrorType = require("./errors.json")
 const ggeConfig = require("./ggeConfig.json")
-const {firefox} = require("playwright-core");
+const {firefox} = require("playwright-core")
 
-const { chain } = require('stream-chain');
-const { parser } = require('stream-json');
-const { pick } = require('stream-json/filters/Pick');
-const { streamValues } = require('stream-json/streamers/StreamValues');
+const { chain } = require('stream-chain')
+const { parser } = require('stream-json')
+const { pick } = require('stream-json/filters/Pick')
+const { streamValues } = require('stream-json/streamers/StreamValues')
+
+let certificateFound = true
+
+if(ggeConfig.cert && !fs.existsSync(ggeConfig.cert))
+{
+  throw Error("Could not find certificate!")
+}
+
+if(ggeConfig.privateKey && !fs.existsSync(ggeConfig.privateKey))
+{
+  throw Error("Could not find privateKey!")
+}
+
+if(!(ggeConfig.privateKey && ggeConfig.cert))
+{
+  console.warn("Could not find privateKey nor cert! Falling back to http mode")
+  certificateFound = false
+}
+else if (!ggeConfig.privateKey)
+{
+  console.warn("Could not find privateKey! Falling back to http mode")
+  certificateFound = false
+}
+else if(!ggeConfig.cert)
+{
+  console.warn("Could not find cert! Falling back to http mode")
+  certificateFound = false
+}
+
+if(!ggeConfig.fontPath) {
+  if(!fs.existsSync("C:\\Windows\\Fonts\\segoeui.ttf"))
+  {
+    throw Error("Could not find a suitable font!")
+  }
+  ggeConfig.fontPath = "C:\\Windows\\Fonts\\segoeui.ttf"
+}
+let internalWorkerEnabled = true
+if(ggeConfig.noInternalWorker)
+  internalWorkerEnabled = false 
+else if(!(ggeConfig.discordToken && ggeConfig.discordClientId && ggeConfig.internalWorkerPass && ggeConfig.internalWorkerName))
+{
+  console.warn("Could not setup internalWorker")
+  console.warn("Following configurations are missing: ")
+  if(!ggeConfig.discordToken)
+    console.warn("discordToken")
+    if(!ggeConfig.discordClientId)
+    console.warn("discordClientId")
+    if(!ggeConfig.internalWorkerName)
+    console.warn("internalWorkerName")
+    if(!ggeConfig.internalWorkerPass)
+    console.warn("internalWorkerPass")
+  internalWorkerEnabled = false
+}
 let frame
 const eventAutoScalingCamps = new Promise(resolve =>
   chain([
@@ -111,7 +164,6 @@ async function createBot(uuid, user) {
   if (user.id && botMap.get(user.id) != undefined)
     throw Error("User already in use")
   let data = structuredClone(user)
-  data.threadId = internalWorker.threadId
   data.units = await units
   data.rageCapID = await rageCapID
   data.eventAutoScalingCamps = await eventAutoScalingCamps
@@ -275,13 +327,18 @@ app.post("/api", bodyParser.json(), async (req, res) => {
   }
 });
 app.use(express.static('website'))
+let options = {}
+if (certificateFound) {
+  options.key = fs.readFileSync(ggeConfig.privateKey, 'utf8'),
+  options.cert = fs.readFileSync(ggeConfig.cert, 'utf8')
+  
+  https.createServer(options, app).listen(443)
+}
+else {
+  http.createServer(options, app).listen(80)
+}
 
-const options = {
-  key: fs.readFileSync(ggeConfig.privateKey, 'utf8'),
-  cert: fs.readFileSync(ggeConfig.cert, 'utf8')
-};
 
-https.createServer(options, app).listen(443)
 
 const plugins = require("./plugins")
   .filter(e => !e[1].hidden)
@@ -383,17 +440,17 @@ let getUser = (uuid) => new Promise((resolve, reject) => {
 })
   ; (async () => {
 
-    const url = ggeConfig.debug ? "https://empire.goodgamestudios.com" : "https://empire.goodgamestudios.com/RECAPCHA.html";
+    const url = !ggeConfig.recaptchaTrick ? "https://empire.goodgamestudios.com" : "https://empire.goodgamestudios.com/RECAPCHA.html";
     
     const browser = await firefox.launch({
       headless: true, ignoreDefaultArgs: true, firefoxUserPrefs:
         { "security.ssl.enable_ocsp_stapling": false, "security.enterprise_roots.enabled": false, "general.useragent.override": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" }, args: [
-          "-no-remote", "-wait-for-browser", "-foreground", `-profile ${ggeConfig.firefoxProfile}`, "-juggler-pipe", "-silent", "-headless", "-profile", ggeConfig.firefoxProfile,
+          "-no-remote", "-wait-for-browser", "-foreground", "-juggler-pipe", "-silent", "-headless", ggeConfig.recaptchaTrick ? ("-profile", ggeConfig.firefoxProfile): "",
         "disable-infobars", "--disable-extensions", "--no-sandbox", "--disable-application-cache", "--disable-gpu", "--disable-dev-shm-usage"]
     })
     const page = await browser.newPage();
     await page.goto(url);
-    if(ggeConfig.debug)
+    if(!ggeConfig.recaptchaTrick)
       frame = page.frame("game")
     else
       frame = page
@@ -402,38 +459,35 @@ let getUser = (uuid) => new Promise((resolve, reject) => {
 
     await frame.evaluate(() => new Promise((resolve) =>
       globalThis.window.grecaptcha.ready(resolve)))
-    
-    internalWorker = new Worker("./ggebot.js", { workerData: internalWorkerData })
-    internalWorker.on("message", async (obj) => {
-      if(obj[0] == ActionType.CAPTCHA)
-        internalWorker.postMessage([ActionType.CAPTCHA, await captchaToken()])
-    })
-    let onExit = _ => {
+    if (internalWorkerEnabled) {
       internalWorker = new Worker("./ggebot.js", { workerData: internalWorkerData })
-      internalWorker.on("exit", onExit)
       internalWorker.on("message", async (obj) => {
         if (obj[0] == ActionType.CAPTCHA)
           internalWorker.postMessage([ActionType.CAPTCHA, await captchaToken()])
       })
+      let onExit = _ => {
+        internalWorker = new Worker("./ggebot.js", { workerData: internalWorkerData })
+        internalWorker.on("exit", onExit)
+        internalWorker.on("message", async (obj) => {
+          if (obj[0] == ActionType.CAPTCHA)
+            internalWorker.postMessage([ActionType.CAPTCHA, await captchaToken()])
+        })
+      }
 
-      botMap.forEach(val => {
-        val.postMessage([ActionType.GetThreadID, internalWorker.threadId])
+      internalWorker.on("exit", onExit)
+
+      await new Promise((resolve) => {
+        let func = async (obj) => {
+          if (obj[0] != ActionType.Started)
+            return
+          resolve()
+          internalWorker.once("exit", resolve)
+          internalWorker.off("message", func)
+        }
+
+        internalWorker.on("message", func)
       })
     }
-
-    internalWorker.on("exit", onExit)
-
-    await new Promise((resolve) => {
-      let func = async (obj) => {
-        if (obj[0] != ActionType.Started)
-          return  
-        resolve()
-        internalWorker.once("exit", resolve)
-        internalWorker.off("message", func)
-      }
-    
-      internalWorker.on("message", func)
-    })
     getUser().then(async users => {
       for (let i = 0; i < users.length; i++) {
         const user = users[i];
@@ -444,8 +498,12 @@ let getUser = (uuid) => new Promise((resolve, reject) => {
       }
     })
     
-var server = (ggeConfig.debug ? http : https).createServer(options)
+  
+let server = (certificateFound ? https : http).createServer(options)
+
 server.listen(8882)
+
+
 var wss = new WebSocketServer({ server })
 wss.addListener("connection", (ws) => {
   let uuid = ""

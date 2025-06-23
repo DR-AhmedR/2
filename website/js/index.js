@@ -18,7 +18,7 @@ async function login(event) {
     return false;
   }
 
-  var json = await (await fetch(`https://${window.location.hostname}:${location.port}/api`, {
+  var json = await (await fetch(`${location.protocol === 'https:' ? "https" : "http"}://${window.location.hostname}:${location.port}/api`, {
     method: "POST",
     body: JSON.stringify({ id: 0, email_name: emailOrName, password: password }),
     headers: {
