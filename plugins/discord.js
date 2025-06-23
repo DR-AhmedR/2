@@ -14,7 +14,7 @@ const ggeConfig = require("../ggeConfig.json")
 let clientOptions = { intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildIntegrations, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildPresences] }
 let client = new Client(clientOptions)
 
-client.on(Events.ClientReady, () => client.user.setActivity('The same thing we do every night, try to take over the world!\nPM: quillers616_74993'))
+client.on(Events.ClientReady, () => client.user.setActivity('github.com/darrenthebozz/GGE-BOT'))
 
 let commands = new Collection()
 
