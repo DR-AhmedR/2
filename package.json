@@ -1,4 +1,11 @@
 {
+  "name": "gge-bot",
+  "version": "1.0.0",
+  "description": "GoodGame Empire Bot",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "discord.js": "^14.16.3",
