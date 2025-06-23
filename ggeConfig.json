@@ -1,16 +1,17 @@
 {
-    "gameURL" : "wss://ep-live-mz-int1-sk1-gb1-game.goodgamestudios.com/",
-    "gameServer" : "EmpireEx_19",
-    "fontPath" : "",
+    "gameURL" : "wss://ep-live-mz-sa1-ae1-eg1-arab1-game.goodgamestudios.com/",
+    "gameServer" : "EmpireEx_34",
+
+    "fontPath" : "c:\\test.fon",
     "debug" : false,
     "discordToken" : "",
     "discordClientId" : "",
-    "signupToken" : "EXAMPLE_TOKEN_VERY_LONG_DO_CHANGE",
     "noInternalWorker" : true,
-    "internalWorkerName" : "",
-    "internalWorkerPass" : "",
-    "privateKey" : "",
-    "cert" : "",
-    "firefoxProfile" : "",
-    "defaultAllianceName" : ""
+    "signupToken" : "EXAMPLE_TOKEN_VERY_LONG_DO_CHANGE",
+    "internalWorkerName" : "Ahmed.R",
+    "internalWorkerPass" : "0123456789",
+    "privateKey" : "dummy.key",
+    "cert" : "dummy.crt",
+    "firefoxProfile" : "", 
+    "defaultAllianceName" : "THE ROCK"
 }
