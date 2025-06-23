@@ -3,9 +3,8 @@ DISCLAIMER: Use this at your own risk.
 We are not affiliated with GoodGameStudios
 
 What this package comes with:
-A site where you can run multiple bots with select plugins.
-
-1. A discord bot:
+1. A site where you can run multiple bots with select plugins.
+2. A discord bot:
   Format of / commands : /loot alliance_name ; Gives the alliance loot rankings
   Gives you these slash commands:
     /loot
@@ -16,21 +15,50 @@ A site where you can run multiple bots with select plugins.
     /bloodcrows
     /storm
     /storm-top-players
-2. Plugins:
-  Alerts
-  Outgoings
-  Chat
-  Aqua Island listings / Alerts
-  Aqua Tower listings / Alerts
-  Fortress listings / Alerts
+3. Plugins:
+  Alerts:
+    ChannelID
+    ChannelIDAqua
+  Outgoings:
+    ChannelID
+  Chat:
+    ChannelID
+    Hide discord name
+  Aqua Island listings / Alerts:
+    ChannelID
+    AlertChannelID
+  Aqua Tower listings / Alerts:
+    ChannelID
+    AlertChannelID
+  Fortress listings:
+    ChannelID
 
   Shutdown Timer
+    Hours
   Attack Fortresses (Kingdom)
   Attack Barrons (Fire)
-  Attack Aqua Forts
-  Attack Khan
-  Attack Nomads
-  Attack Samurai
+  Attack Aqua Forts:
+    Easy forts only
+    Add worser forts
+    Hard forts prioritized
+    Buy coins
+    Buy decos
+    Buy XP
+  Attack Khan:
+    Commander white list
+    Lowest banners/chests first
+    Waves till chests
+  Attack Nomads:
+    No chests
+    Uses only tools
+    Lowest chests first
+  Attack Samurai:
+    No chests
+    Uses only tools
+    Lowest chests first
+  Attack Beri (Invasion):
+    Uses only tools
+    Lowest chests first
   Replace Mead Storm
 
 What you need to do to use:
